@@ -35,7 +35,7 @@ async function run() {
 
         const productsCollection = client.db("TechBar").collection("products");
 
-        app.get('/allProduct', async(req, res) =>{
+        app.get('/allProduct', async (req, res) => {
             const allProduct = await productsCollection.find().toArray();
 
             res.send(allProduct)
@@ -44,8 +44,8 @@ async function run() {
 
         app.get('/products', async (req, res) => {
             try {
-                const { search, brand, category, minPrice, maxPrice } = req.query;
-                console.log(search, brand, category, minPrice, maxPrice);
+                const { search, brand, category, minPrice, maxPrice, currentPage } = req.query;
+                console.log(search, brand, category, minPrice, maxPrice, currentPage);
 
                 // Build the query object
                 let query = {};
@@ -75,9 +75,18 @@ async function run() {
 
                 // Fetch products from MongoDB based on the query
                 const products = await productsCollection.find(query).toArray();
-                console.log('products=', products);
+                // console.log('products=', products);
+                const count = products.length;
 
-                res.send(products);
+                const page = parseInt(currentPage);
+                const result = await productsCollection.find(query)
+                    .skip(page * 6)
+                    .limit(6)
+                    .toArray();
+
+                    console.log('products=', result);
+
+                res.send({count, product : result});
             } catch (error) {
                 res.status(500).json({ error: 'Internal Server Error' });
                 console.log('does not hit');
