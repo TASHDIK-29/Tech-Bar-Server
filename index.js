@@ -34,6 +34,7 @@ async function run() {
         // await client.connect();
 
         const productsCollection = client.db("TechBar").collection("products");
+        const bookmarksCollection = client.db("TechBar").collection("bookmarks");
 
         app.get('/allProduct', async (req, res) => {
             const allProduct = await productsCollection.find().toArray();
@@ -92,8 +93,8 @@ async function run() {
                 const page = parseInt(currentPage);
                 const result = await productsCollection.find(query)
                     .sort(sortOrder)
-                    .skip(page * 6)
-                    .limit(6)
+                    .skip(page * 4)
+                    .limit(4)
                     .toArray();
 
                 // console.log('products=', result);
@@ -104,6 +105,22 @@ async function run() {
                 console.log('does not hit');
             }
         });
+
+
+        app.post('/bookmark', async(req, res) =>{
+            const bookmark = req.body;
+            console.log(bookmark);
+
+            const isExist = await bookmarksCollection.findOne({email : bookmark.email, productId : bookmark.productId})
+
+            if(!isExist){
+
+                const result = await bookmarksCollection.insertOne(bookmark);
+                return res.send(result);
+            }
+
+            res.send({message : 'Already Bookmarked'});
+        })
 
 
 
