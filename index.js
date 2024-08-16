@@ -122,6 +122,19 @@ async function run() {
             res.send({message : 'Already Bookmarked'});
         })
 
+        app.get('/bookmark', async(req, res) =>{
+            const {email} = req.query;
+            console.log(email);
+
+            const query = {
+                email : email
+            }
+
+            const result = await bookmarksCollection.find(query).toArray();
+
+            res.send(result);
+        })
+
 
 
 
