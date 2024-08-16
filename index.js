@@ -57,11 +57,11 @@ async function run() {
                     ];
                 }
 
-                if (brand) {
+                if (brand && brand != "All") {
                     query.Brand = brand; // Direct match for a single brand
                 }
 
-                if (category) {
+                if (category && category != "All") {
                     query.Category = category; // Direct match for a single category
                 }
 
