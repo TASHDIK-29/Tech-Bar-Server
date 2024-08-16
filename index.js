@@ -44,8 +44,8 @@ async function run() {
 
         app.get('/products', async (req, res) => {
             try {
-                const { search, brand, category, minPrice, maxPrice, currentPage } = req.query;
-                console.log(search, brand, category, minPrice, maxPrice, currentPage);
+                const { search, brand, category, minPrice, maxPrice, currentPage, sort } = req.query;
+                console.log(search, brand, category, minPrice, maxPrice, currentPage, sort);
 
                 // Build the query object
                 let query = {};
@@ -73,6 +73,17 @@ async function run() {
                     query.Price = { $lte: parseFloat(maxPrice) };
                 }
 
+
+                // Define the sort order
+                let sortOrder = {};
+                if (sort === 'low-to-high') {
+                    sortOrder.Price = 1; // Ascending
+                } else if (sort === 'high-to-low') {
+                    sortOrder.Price = -1; // Descending
+                } else if (sort === 'newest-first') {
+                    sortOrder.ProductCreationDate = -1; // Newest first
+                }
+
                 // Fetch products from MongoDB based on the query
                 const products = await productsCollection.find(query).toArray();
                 // console.log('products=', products);
@@ -80,13 +91,14 @@ async function run() {
 
                 const page = parseInt(currentPage);
                 const result = await productsCollection.find(query)
+                    .sort(sortOrder)
                     .skip(page * 6)
                     .limit(6)
                     .toArray();
 
-                    console.log('products=', result);
+                // console.log('products=', result);
 
-                res.send({count, product : result});
+                res.send({ count, product: result });
             } catch (error) {
                 res.status(500).json({ error: 'Internal Server Error' });
                 console.log('does not hit');
