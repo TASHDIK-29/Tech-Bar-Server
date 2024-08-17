@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const corsOptions = {
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: ['http://localhost:5173', 'http://localhost:5174', 'https://tech-bar-34a6b.web.app'],
     // credentials: true,
     // optionSuccessStatus: 200,
 }
@@ -46,7 +46,7 @@ async function run() {
         app.get('/products', async (req, res) => {
             try {
                 const { search, brand, category, minPrice, maxPrice, currentPage, sort } = req.query;
-                console.log(search, brand, category, minPrice, maxPrice, currentPage, sort);
+                // console.log(search, brand, category, minPrice, maxPrice, currentPage, sort);
 
                 // Build the query object
                 let query = {};
@@ -102,14 +102,14 @@ async function run() {
                 res.send({ count, product: result });
             } catch (error) {
                 res.status(500).json({ error: 'Internal Server Error' });
-                console.log('does not hit');
+                // console.log('does not hit');
             }
         });
 
 
         app.post('/bookmark', async(req, res) =>{
             const bookmark = req.body;
-            console.log(bookmark);
+            // console.log(bookmark);
 
             const isExist = await bookmarksCollection.findOne({email : bookmark.email, productId : bookmark.productId})
 
@@ -124,7 +124,7 @@ async function run() {
 
         app.get('/bookmark', async(req, res) =>{
             const {email} = req.query;
-            console.log(email);
+            // console.log(email);
 
             const query = {
                 email : email
